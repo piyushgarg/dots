@@ -8,6 +8,13 @@
 # `$0 kill`: Kill existing recording
 #
 # If there is already a running instance, user will be prompted to end it.
+##-f alsa -thread_queue_size 1024 -i default \
+#-f pulse -i alsa_output.usb-Plantronics_Plantronics_Blackwire_5220_Series_3E4B191B52294AD5972DA9DE7C5026EE-00.analog-stereo.monitor \
+#-f pulse -i alsa_output.usb-Plantronics_Plantronics_Blackwire_5220_Series_3E4B191B52294AD5972DA9DE7C5026EE-00.analog-stereo \
+deviceid=$(pactl list sinks short | grep RUNNING | grep Plantronics |  awk '{print$1}')
+if [ "$deviceid" = "" ] ; then
+	deviceid=$(pactl list sinks short | grep RUNNING | awk '{print$1}')
+fi
 
 getdim() { xrandr | sed -n "s/\s*\([0-9]\+x[0-9]\+\).*\*.*/\1/p" ;}
 
@@ -32,10 +39,13 @@ screencast() { \
 	-i "$DISPLAY" \
 	-r 24 \
 	-use_wallclock_as_timestamps 1 \
-	-f alsa -thread_queue_size 1024 -i default \
- 	-c:v h264 \
+	-f pulse -i $deviceid \
+	-f pulse -i default \
+	-filter_complex "[1:a][2:a] amerge=inputs=2,pan=stereo|c0<c0+c2|c1<c1+c3[a]" \
+	 -map 0 -map "[a]" -map 1 -map 2 \
+	-c:v h264 \
 	-crf 0 -preset ultrafast -c:a aac \
-	"$HOME/screencast-$(date '+%y%m%d-%H%M-%S').mp4" &
+	"$HOME/Videos/screencast-$(date '+%y%m%d-%H%M-%S').mp4" &
 	echo $! > /tmp/recordingpid
 	updateicon "⏺️🎙️"
        	}
@@ -46,7 +56,7 @@ video() { ffmpeg \
 	-s "$(getdim)" \
 	-i "$DISPLAY" \
  	-c:v libx264 -qp 0 -r 30 \
-	"$HOME/video-$(date '+%y%m%d-%H%M-%S').mkv" &
+	"$HOME/Videos/video-$(date '+%y%m%d-%H%M-%S').mkv" &
 	echo $! > /tmp/recordingpid
 	updateicon "⏺️"
 	}
@@ -55,7 +65,7 @@ webcamhidef() { ffmpeg \
 	-f v4l2 \
 	-i /dev/video0 \
 	-video_size 1920x1080 \
-	"$HOME/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
+	"$HOME/Videos/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
 	echo $! > /tmp/recordingpid
 	updateicon "🎥"
 	}
@@ -64,7 +74,7 @@ webcam() { ffmpeg \
 	-f v4l2 \
 	-i /dev/video0 \
 	-video_size 640x480 \
-	"$HOME/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
+	"$HOME/Videos/webcam-$(date '+%y%m%d-%H%M-%S').mkv" &
 	echo $! > /tmp/recordingpid
 	updateicon "🎥"
 	}
@@ -72,9 +82,9 @@ webcam() { ffmpeg \
 
 audio() { \
 	ffmpeg \
-	-f alsa -i default \
+	-f pulse -i default \
 	-c:a flac \
-	"$HOME/audio-$(date '+%y%m%d-%H%M-%S').flac" &
+	"$HOME/Videos/audio-$(date '+%y%m%d-%H%M-%S').flac" &
 	echo $! > /tmp/recordingpid
 	updateicon "🎙️"
 	}
@@ -108,7 +118,7 @@ videoselected()
 	-video_size "$W"x"$H" \
 	-i :0.0+"$X,$Y" \
 	-c:v libx264 -qp 0 -r 30 \
-	"$HOME/box-$(date '+%y%m%d-%H%M-%S').mkv" &
+	"$HOME/Videos/box-$(date '+%y%m%d-%H%M-%S').mkv" &
 	echo $! > /tmp/recordingpid
 	updateicon "⏺️"
 }

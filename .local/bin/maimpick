@@ -8,7 +8,7 @@
 #output="$(date '+%y%m%d-%H%M-%S').png"
 output="$HOME/Pictures/Screenshots/Screenshot $(date +"%Y-%m-%d at %I.%M.%S %p").png"
 xclip_cmd="xclip -sel clip -t image/png"
-mpv_command="mpv --no-resume-playback --keep-open=no --idle=no /home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+mpv_command="mpv --no-resume-playback --keep-open=no --idle=no $HOME/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
 case "$(printf "a selected area\\ncurrent window\\nfull screen\\na selected area (copy)\\ncurrent window (copy)\\nfull screen (copy)" | dmenu -l 6 -i -p "Screenshot which area?")" in
     "a selected area")
 	    maim -u -s "${output}"
@@ -47,9 +47,3 @@ case "$(printf "a selected area\\ncurrent window\\nfull screen\\na selected area
 	    $mpv_command
 	    ;;
 esac
-
-#if [ -f $output ] ; then
-#	xclip -selection clipboard -t image/png -i $output
-#	notify-send "Screenshot saved at $output."
-#	mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
-#fi

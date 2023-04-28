@@ -8,42 +8,48 @@
 #output="$(date '+%y%m%d-%H%M-%S').png"
 output="$HOME/Pictures/Screenshots/Screenshot $(date +"%Y-%m-%d at %I.%M.%S %p").png"
 xclip_cmd="xclip -sel clip -t image/png"
-
+mpv_command="mpv --no-resume-playback --keep-open=no --idle=no /home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
 case "$(printf "a selected area\\ncurrent window\\nfull screen\\na selected area (copy)\\ncurrent window (copy)\\nfull screen (copy)" | dmenu -l 6 -i -p "Screenshot which area?")" in
     "a selected area")
 	    maim -u -s "${output}"
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    $mpv_command
 	    ;;
     "current window")
 	    maim -q -d 0.2 -i "$(xdotool getactivewindow)" "${output}"
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    $mpv_command
 	    ;;
     "full screen")
 	    maim -q -d 0.2 "${output}"
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    $mpv_command
 	    ;;
     "a selected area (copy)")
-	    maim -u -s "${output}"| ${xclip_cmd}
+	    maim -u -s "${output}"
+	    #| ${xclip_cmd}
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    xclip -selection clipboard -t image/png -i "$output"
+	    $mpv_command
 	    ;;
     "current window (copy)")
-	    maim -q -d 0.2 -i "$(xdotool getactivewindow)" "${output}"| ${xclip_cmd}
+	    maim -q -d 0.2 -i "$(xdotool getactivewindow)" "${output}"
+	    #| ${xclip_cmd}
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    xclip -selection clipboard -t image/png -i "$output"
+	    $mpv_command
 	    ;;
     "full screen (copy)")
-	    maim -q -d 0.2 "${output}"| ${xclip_cmd}
+	    maim -q -d 0.2 "${output}"
+	    #| ${xclip_cmd}
 	    notify-send "Screenshot saved at $output."
-	    mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+	    xclip -selection clipboard -t image/png -i "$output"
+	    $mpv_command
 	    ;;
 esac
 
-if [ -f $output ] ; then
-	xclip -selection clipboard -t image/png -i $output
-	notify-send "Screenshot saved at $output."
-	mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
-fi
+#if [ -f $output ] ; then
+#	xclip -selection clipboard -t image/png -i $output
+#	notify-send "Screenshot saved at $output."
+#	mpv --no-resume-playback --keep-open=no --idle=no "/home/piyush/Downloads/dbes/Dropbox/sounds/win10/DeviceConnect.wav"
+#fi

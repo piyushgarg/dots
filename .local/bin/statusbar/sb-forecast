@@ -5,7 +5,7 @@
 
 url="${WTTRURL:-wttr.in}"
 weatherreport="${XDG_CACHE_HOME:-$HOME/.cache}/weatherreport"
-
+LOCATION="hoodi"
 # Get a weather report from 'wttr.in' and save it locally.
 getforecast() { curl -sf "$url/$LOCATION" > "$weatherreport" || exit 1; }
 
